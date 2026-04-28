@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stripe Mock Test</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+    }
+
+    #card-element {
+      border: 1px solid #ccc;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 15px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Stripe Test (Mock Card)</h2>
+
+<div id="card-element"></div>
+
+<button id="pay">Create PaymentMethod</button>
+
+<p id="result"></p>
+
+<script>
+  // 1. init Stripe (public key test)
+  const stripe = Stripe("pk_test_51TQsG7DjHrc5riCbsKNDc3SZQMT3sNLL4XPv6ThuxKd2fkyGKX1gzVtyZtPTyziCjKuCwmpuyJQzbxNd62QoRmYI00IgyQd9Qi"); // thay bằng key của mày
+
+  const elements = stripe.elements();
+  const card = elements.create("card");
+  card.mount("#card-element");
+
+  // 2. MOCK data helper (Stripe tự fill UI test card)
+  const mockCardData = {
+    number: "4242 4242 4242 4242",
+    exp_month: "12",
+    exp_year: "27",
+    cvc: "123"
+  };
+
+  console.log("Mock card (use in UI):", mockCardData);
+
+  // 3. tạo payment method
+  document.getElementById("pay").addEventListener("click", async () => {
+    const result = await stripe.createPaymentMethod({
+      type: "card",
+      card: card
+    });
+
+    if (result.error) {
+      document.getElementById("result").innerText = result.error.message;
+      return;
+    }
+
+    const pmId = result.paymentMethod.id;
+
+    console.log("PaymentMethod ID:", pmId);
+
+    document.getElementById("result").innerText =
+      "PaymentMethod: " + pmId;
+  });
+</script>
+
+</body>
+</html>

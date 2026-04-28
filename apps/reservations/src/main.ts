@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(ReservationsModule);
 
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true
+    whitelist: true,
   }))
   app.useLogger(app.get(Logger))
   app.use(cookieParser())
